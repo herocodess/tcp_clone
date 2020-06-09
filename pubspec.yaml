@@ -31,6 +31,11 @@ dependencies:
   google_fonts:
   qr_flutter:
   barcode_scan:
+  get_ip:
+  dash_chat:
+  provider:
+  flutter_socket_io:
+  flutter_secure_storage:
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tcp_clone/core/server/server.dart';
 
 class ServerStart extends StatefulWidget {
   @override
@@ -6,10 +9,15 @@ class ServerStart extends StatefulWidget {
 }
 
 class _ServerStartState extends State<ServerStart> {
+  
+  var ip;
+  @override
+  void initState(){
+    context.read<Server>().initState();
+    
+    super.initState();
+  }
 
-  var _ipController = TextEditingController();
-  var _portController = TextEditingController();
-  var _nameController = TextEditingController();
 
   _buildHeader() {
     return Container(
@@ -61,55 +69,56 @@ class _ServerStartState extends State<ServerStart> {
     );
   }
 
-  _buildTF() {
-    return Container(
-      child: Column(
-        children: [
-          InputFields(
-            controller: _ipController,
-            hintText: "Enter IP Address",
-            readOnly: true,
-            inputStyle: TextInputType.numberWithOptions(),
-          ),
-          SizedBox(height: 20,),
-          InputFields(
-            controller: _portController,
-            hintText: "4000",
-            readOnly: false,
-            inputStyle: TextInputType.number,
-          ),
-          SizedBox(height: 20,),
-          InputFields(
-            controller: _nameController,
-            hintText: "Enter Name",
-            readOnly: true,
-            inputStyle: TextInputType.text,
-          ),
-        ],
-      ),
-    );
-  }
+  // _buildTF() {
+  //   return Container(
+  //     child: Column(
+  //       children: [
+  //         InputFields(
+  //           controller: provider.ipController,
+  //           hintText: "Enter IP Address",
+  //           readOnly: true,
+  //           inputStyle: TextInputType.numberWithOptions(),
+  //         ),
+  //         SizedBox(height: 20,),
+  //         InputFields(
+  //           controller: provider.portController,
+  //           hintText: "4000",
+  //           readOnly: false,
+  //           inputStyle: TextInputType.number,
+  //         ),
+  //         SizedBox(height: 20,),
+  //         InputFields(
+  //           controller: provider.nameController,
+  //           hintText: "Enter Name",
+  //           readOnly: true,
+  //           inputStyle: TextInputType.text,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  _buildButton() {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 40, left: 40),
-        child: RaisedButton(
-          elevation: 0.0,
-          color: Colors.indigo,
-          child: Text('Start Server', style: TextStyle(color: Colors.white70),),
-          onPressed: () {},
-        ),
-      ),
-    );
-  }
+  // _buildButton() {
+  //   return Container(
+  //     height: 50,
+  //     width: double.infinity,
+  //     color: Colors.transparent,
+  //     child: Padding(
+  //       padding: const EdgeInsets.only(right: 40, left: 40),
+  //       child: RaisedButton(
+  //         elevation: 0.0,
+  //         color: Colors.indigo,
+  //         child: Text('Start Server', style: TextStyle(color: Colors.white70),),
+  //         onPressed: () => provider.start(context),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
   @override
   Widget build(BuildContext context) {
+    var provider = context.watch<Server>();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: ListView(
@@ -121,10 +130,48 @@ class _ServerStartState extends State<ServerStart> {
           ),
           Padding(
             padding: EdgeInsets.all(40),
-            child: _buildTF(),
+            child: Container(
+              child: Column(
+                children: [
+                  InputFields(
+                    controller: provider.ipController,
+                    hintText: "Enter IP Address",
+                    readOnly: true,
+                    inputStyle: TextInputType.numberWithOptions(),
+                  ),
+                  SizedBox(height: 20,),
+                  InputFields(
+                    controller: provider.portController,
+                    hintText: "4000",
+                    readOnly: false,
+                    inputStyle: TextInputType.number,
+                  ),
+                  SizedBox(height: 20,),
+                  InputFields(
+                    controller: provider.nameController,
+                    hintText: "Enter Name",
+                    readOnly: true,
+                    inputStyle: TextInputType.text,
+                  ),
+                ],
+              ),
+            ),
           ),
           SizedBox(height: 150,),
-          _buildButton(),
+          Container(
+            height: 50,
+            width: double.infinity,
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 40, left: 40),
+              child: RaisedButton(
+                elevation: 0.0,
+                color: Colors.indigo,
+                child: Text('Start Server', style: TextStyle(color: Colors.white70),),
+                onPressed: () => provider.startServer(context),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -159,7 +206,7 @@ class _InputFieldsState extends State<InputFields> {
         enabled: widget.readOnly,
         keyboardType: widget.inputStyle,
         maxLines: 1,
-        style: TextStyle(color: Colors.white70),
+        style: TextStyle(color: Colors.black),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: widget.hintText,

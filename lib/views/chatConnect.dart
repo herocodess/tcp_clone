@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tcp_clone/core/server/server.dart';
 
 class ChatStart extends StatefulWidget {
   @override
@@ -6,10 +8,13 @@ class ChatStart extends StatefulWidget {
 }
 
 class _ChatStartState extends State<ChatStart> {
-
-  var _ipController = TextEditingController();
-  var _portController = TextEditingController();
-  var _nameController = TextEditingController();
+  // var provider;
+   @override
+  void initState() {
+    context.read<Server>().initState();
+    
+    super.initState();
+  } 
 
   _buildHeader() {
     return Container(
@@ -61,65 +66,66 @@ class _ChatStartState extends State<ChatStart> {
     );
   }
 
-  _buildTF() {
-    return Container(
-      child: Column(
-        children: [
-          InputFields(
-            controller: _ipController,
-            hintText: "Enter IP Address",
-            readOnly: true,
-            inputStyle: TextInputType.numberWithOptions(),
-          ),
-          SizedBox(height: 20,),
-          InputFields(
-            controller: _portController,
-            hintText: "4000",
-            readOnly: false,
-            inputStyle: TextInputType.number,
-          ),
-          SizedBox(height: 20,),
-          InputFields(
-            controller: _nameController,
-            hintText: "Enter Name",
-            readOnly: true,
-            inputStyle: TextInputType.text,
-          ),
-        ],
-      ),
-    );
-  }
+  // _buildTF() {
+  //   return Container(
+  //     child: Column(
+  //       children: [
+  //         InputFields(
+  //           controller: provider.ipController,
+  //           hintText: "Enter IP Address",
+  //           readOnly: true,
+  //           inputStyle: TextInputType.numberWithOptions(),
+  //         ),
+  //         SizedBox(height: 20,),
+  //         InputFields(
+  //           controller: provider.portController,
+  //           hintText: "4000",
+  //           readOnly: false,
+  //           inputStyle: TextInputType.number,
+  //         ),
+  //         SizedBox(height: 20,),
+  //         InputFields(
+  //           controller: provider.nameController,
+  //           hintText: "Enter Name",
+  //           readOnly: true,
+  //           inputStyle: TextInputType.text,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
-  _buildButton() {
-    return Container(
-      height: 50,
-      width: double.infinity,
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 40, left: 40),
-        child: RaisedButton(
-          elevation: 0.0,
-          color: Colors.indigo,
-          child: Text('Connect to Server', style: TextStyle(color: Colors.white70),),
-          onPressed: () {},
-        ),
-      ),
-    );
-  }
+  // _buildButton() {
+  //   return Container(
+  //     height: 50,
+  //     width: double.infinity,
+  //     color: Colors.transparent,
+  //     child: Padding(
+  //       padding: const EdgeInsets.only(right: 40, left: 40),
+  //       child: RaisedButton(
+  //         elevation: 0.0,
+  //         color: Colors.indigo,
+  //         child: Text('Connect to Server', style: TextStyle(color: Colors.white70),),
+  //         onPressed: () => provider.connectToServer(context, isHost: false),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  _buildScanIcon() {
-    return GestureDetector(
-      onTap: () {},
-      child: Container(
-        color: Colors.transparent,
-        child: Icon(Icons.filter_center_focus, color: Colors.white70,),
-      ),
-    );
-  }
+  // _buildScanIcon() {
+  //   return GestureDetector(
+  //     onTap: () => provider.scan(context),
+  //     child: Container(
+  //       color: Colors.transparent,
+  //       child: Icon(Icons.filter_center_focus, color: Colors.white70,),
+  //     ),
+  //   );
+  // }
 
 
   @override
   Widget build(BuildContext context) {
+    var provider = context.watch<Server>();
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: ListView(
@@ -131,13 +137,63 @@ class _ChatStartState extends State<ChatStart> {
           ),
           Padding(
             padding: EdgeInsets.all(40),
-            child: _buildTF(),
+            child: Container(
+              child: Column(
+                children: [
+                  InputFields(
+                    controller: provider.ipController,
+                    hintText: "Enter IP Address",
+                    readOnly: true,
+                    inputStyle: TextInputType.numberWithOptions(),
+                  ),
+                  SizedBox(height: 20,),
+                  InputFields(
+                    controller: provider.portController,
+                    hintText: "4000",
+                    readOnly: false,
+                    inputStyle: TextInputType.number,
+                  ),
+                  SizedBox(height: 20,),
+                  InputFields(
+                    controller: provider.nameController,
+                    hintText: "Enter Name",
+                    readOnly: true,
+                    inputStyle: TextInputType.text,
+                  ),
+                ],
+              ),
+            ),
           ),
           SizedBox(height: 100,),
-          _buildButton(),
+          provider.loading?
+            Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            ) 
+          :Container(
+            height: 50,
+            width: double.infinity,
+            color: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 40, left: 40),
+              child: RaisedButton(
+                elevation: 0.0,
+                color: Colors.indigo,
+                child: Text('Connect to Server', style: TextStyle(color: Colors.white70),),
+                onPressed: () => provider.connectToServer(context, isHost: false),
+              ),
+            ),
+          ),
           SizedBox(height: 50,),
           Center(
-            child: _buildScanIcon(),
+            child: GestureDetector(
+              onTap: () => provider.scan(context),
+              child: Container(
+                color: Colors.transparent,
+                child: Icon(Icons.filter_center_focus, color: Colors.white70,),
+              ),
+            ),
           )
         ],
       ),
